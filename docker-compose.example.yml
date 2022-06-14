@@ -1,0 +1,16 @@
+---
+version: "3"
+services:
+  account-service:
+    build: .
+    ports:
+      - 5002:3000
+    environment:
+      - PORT=3000
+      - MONGODB_URI=mongodb://jackson:password@localhost:27017/mp-backend?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false
+      - SECRET_KEY=secret-key
+      - SIGN_OPTIONS=4h
+      - AWS_S3_ACCESS_KEY_ID=AKIARSARRJXQTSWUC7O5
+      - AWS_S3_BUCKET=testnet-assets
+      - AWS_S3_SECRET_ACCESS_KEY=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
+    restart: always
