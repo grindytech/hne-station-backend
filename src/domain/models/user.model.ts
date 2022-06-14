@@ -54,7 +54,7 @@ export class User {
   playerId: string;
 
   @ApiProperty()
-  @Prop({ enum: Role, type: [Role], default: [Role.User] })
+  @Prop({ enum: Role, type: [String], default: [Role.User] })
   role: Role[];
 }
 
