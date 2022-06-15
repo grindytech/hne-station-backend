@@ -15,6 +15,6 @@ export enum BlacklistType {
 }
 
 export enum Role {
-  Admin = 'Admin',
-  User = 'User',
+  Admin = 'admin',
+  User = 'user',
 }

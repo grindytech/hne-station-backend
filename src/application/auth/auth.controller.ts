@@ -16,13 +16,16 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger';
 import { iInfoToken } from 'src/config/requestcontext';
+import { UserDto } from 'src/domain/dtos';
 import { AuthService } from './auth.service';
-import { GetNonceDto, GetTokenDto } from './dto';
+import { GetNonceDto, GetTokenDto, TokenLoginDto } from './dto';
 import { XApiKeyGuard } from './header-x-api-key.guard';
 
 @Controller('authentication')
 @ApiTags('Authentication')
 @ApiExtraModels(iInfoToken)
+@ApiExtraModels(UserDto)
+@ApiExtraModels(TokenLoginDto)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -97,13 +100,32 @@ export class AuthController {
       ],
     },
   })
-  async getTokenDecode(@Body() jwt: { token: string }): Promise<any> {
+  async getTokenDecode(@Body() jwt: TokenLoginDto): Promise<any> {
     const info = await this.authService.jwtDecode(jwt.token);
     return {
       success: true,
       data: info,
       errors: [],
     };
+  }
+  @Post('/token/login')
+  @ApiOkResponse({
+    schema: {
+      allOf: [
+        {
+          properties: {
+            success: { type: 'boolean' },
+            data: {
+              $ref: getSchemaPath(UserDto),
+            },
+            errors: { type: 'object' },
+          },
+        },
+      ],
+    },
+  })
+  async tokenLogin(@Body() jwt: TokenLoginDto): Promise<UserDto> {
+    return await this.authService.tokenLogin(jwt.token);
   }
 
   // @UseGuards(JwtAuthGuard)

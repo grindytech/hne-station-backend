@@ -1,25 +1,28 @@
-import { Model } from 'mongoose';
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { InjectModel } from '@nestjs/mongoose';
-import { bufferToHex } from 'ethereumjs-utils';
-import { recoverPersonalSignature } from 'eth-sig-util';
 import { JwtService } from '@nestjs/jwt';
+import { InjectModel } from '@nestjs/mongoose';
+import { recoverPersonalSignature } from 'eth-sig-util';
+import { bufferToHex } from 'ethereumjs-utils';
 import jwt_decode from 'jwt-decode';
+import { Model } from 'mongoose';
 
-import { User, UserDocument } from '../../domain/models/user.model';
-import { GetTokenDto } from './dto';
+import { InjectMapper } from '@automapper/nestjs';
+import { Mapper } from '@automapper/types';
+import { deserialize } from 'class-transformer';
+import { iInfoToken } from 'src/config/requestcontext';
+import { UserDto } from 'src/domain/dtos';
 import {
   BlackList,
   BlackListDocument,
 } from '../../domain/models/blacklist.model';
-import { iInfoToken } from 'src/config/requestcontext';
+import { User, UserDocument } from '../../domain/models/user.model';
+import { GetTokenDto } from './dto';
 
 @Injectable()
 export class AuthService {
@@ -29,6 +32,8 @@ export class AuthService {
     private readonly blackListModel: Model<BlackListDocument>,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    @InjectMapper()
+    private readonly userMapper: Mapper,
   ) {}
   private logger = new Logger(AuthService.name);
   async getUserByAddress(address: string): Promise<User> {
@@ -139,6 +144,21 @@ export class AuthService {
         throw new UnauthorizedException('Token has expired');
       }
       return info;
+    } catch (error) {
+      this.logger.error(error);
+      throw new UnauthorizedException();
+    }
+  }
+  async tokenLogin(jwt: string): Promise<UserDto> {
+    try {
+      const { sub, exp }: iInfoToken = jwt_decode(jwt);
+      const user = await this.userModel.findById(sub);
+      if (exp > Date.now()) {
+        throw new UnauthorizedException('Token has expired');
+      }
+      const autoUser = deserialize(User, JSON.stringify(user));
+      const userDto = await this.userMapper.mapAsync(autoUser, UserDto, User);
+      return userDto;
     } catch (error) {
       this.logger.error(error);
       throw new UnauthorizedException();

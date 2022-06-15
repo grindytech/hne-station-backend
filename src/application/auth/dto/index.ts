@@ -15,3 +15,8 @@ export class CreateAuthenticationBlacklistDto {
   @ApiProperty({ required: true })
   address: string;
 }
+
+export class TokenLoginDto {
+  @ApiProperty({ required: true })
+  token: string;
+}
