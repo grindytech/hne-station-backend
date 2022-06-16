@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProfileController } from './profile.controller';
 import { ProfileService } from './profile.service';
 import { JwtModule } from '@nestjs/jwt';
-import { User, UserSchema } from '../../domain/models/user.model';
 import { UploadService } from '../shared/services';
+import { DatabaseModule } from '../database/database.module';
+import { usersProvider } from 'src/domain/models';
 
 @Module({
   imports: [
@@ -19,9 +19,9 @@ import { UploadService } from '../shared/services';
       }),
       inject: [ConfigService],
     }),
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    DatabaseModule,
   ],
   controllers: [ProfileController],
-  providers: [ProfileService, UploadService],
+  providers: [ProfileService, UploadService, usersProvider],
 })
 export class ProfileModule {}

@@ -23,7 +23,7 @@ function configureSwagger(app: INestApplication) {
     )
     .build();
   const swaggerDoc = SwaggerModule.createDocument(app, swaggerDocOptions);
-  SwaggerModule.setup('user/docs', app, swaggerDoc);
+  SwaggerModule.setup('docs', app, swaggerDoc);
 }
 
 function configureValidation(app: INestApplication) {
@@ -41,8 +41,8 @@ function configureValidation(app: INestApplication) {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const globalPrefix = 'user/api';
-  app.setGlobalPrefix(globalPrefix);
+  // const globalPrefix = 'api';
+  // app.setGlobalPrefix(globalPrefix);
   app.enableCors();
   configureSwagger(app);
   configureValidation(app);

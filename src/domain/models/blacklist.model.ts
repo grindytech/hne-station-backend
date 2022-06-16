@@ -1,12 +1,12 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Column, Model, Table } from 'sequelize-typescript';
 
-export type BlackListDocument = BlackList & Document;
-
-@Schema({ collection: 'blacklists', timestamps: true })
-export class BlackList {
-  @Prop({ type: String, required: true, index: true })
+@Table
+export class BlackList extends Model {
+  @Column
   address: string;
 }
 
-export const BlackListSchema = SchemaFactory.createForClass(BlackList);
+export const blacklistsProvider = {
+  provide: BlackList.name,
+  useValue: BlackList,
+};

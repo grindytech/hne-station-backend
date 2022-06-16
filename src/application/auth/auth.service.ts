@@ -1,35 +1,31 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { InjectModel } from '@nestjs/mongoose';
 import { recoverPersonalSignature } from 'eth-sig-util';
 import { bufferToHex } from 'ethereumjs-utils';
 import jwt_decode from 'jwt-decode';
-import { Model } from 'mongoose';
 
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/types';
 import { deserialize } from 'class-transformer';
 import { iInfoToken } from 'src/config/requestcontext';
 import { UserDto } from 'src/domain/dtos';
-import {
-  BlackList,
-  BlackListDocument,
-} from '../../domain/models/blacklist.model';
-import { User, UserDocument } from '../../domain/models/user.model';
+import { BlackList } from '../../domain/models/blacklist.model';
+import { User } from '../../domain/models/user.model';
 import { GetTokenDto } from './dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
-    @InjectModel(BlackList.name)
-    private readonly blackListModel: Model<BlackListDocument>,
+    @Inject(User.name) private readonly userModel: typeof User,
+    @Inject(BlackList.name)
+    private readonly blackListModel: typeof BlackList,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     @InjectMapper()
@@ -37,7 +33,7 @@ export class AuthService {
   ) {}
   private logger = new Logger(AuthService.name);
   async getUserByAddress(address: string): Promise<User> {
-    const user = await this.userModel.findOne({ address }).exec();
+    const user = await this.userModel.findOne({ where: { address } });
     if (user) {
       return user;
     }
@@ -74,49 +70,46 @@ export class AuthService {
   }
 
   async createBlackList(address: string): Promise<any> {
-    const blacklist = await this.blackListModel
-      .findOne({
-        address: address.toLowerCase(),
-      })
-      .exec();
+    const blacklist = await this.blackListModel.findOne({
+      where: { address: address.toLowerCase() },
+    });
     if (blacklist) {
-      return blacklist._id.toString();
+      return blacklist.id.toString();
     }
     const savedBlackList = await new this.blackListModel({
       address: address.toLowerCase(),
     }).save();
-    return savedBlackList._id.toString();
+    return savedBlackList.id.toString();
   }
 
   async removeBlackList(address: string): Promise<any> {
-    const blacklist = await this.blackListModel
-      .findOne({
+    const blacklist = await this.blackListModel.findOne({
+      where: {
         address: address.toLowerCase(),
-      })
-      .exec();
+      },
+    });
     if (!blacklist) {
       return null;
     }
-
-    const id = blacklist._id.toString();
-    await this.blackListModel.findOneAndDelete({
-      address: address.toLowerCase(),
+    const id = blacklist.id.toString();
+    await this.blackListModel.destroy({
+      where: { address: address.toLowerCase() },
     });
     return id;
   }
 
   async generateToken(tokenDto: GetTokenDto): Promise<string | null> {
-    const blacklist = await this.blackListModel
-      .findOne({
+    const blacklist = await this.blackListModel.findOne({
+      where: {
         address: tokenDto.address.toLowerCase(),
-      })
-      .exec();
+      },
+    });
     if (blacklist) {
       throw new BadRequestException('Blacklist address');
     }
-    const user = await this.userModel
-      .findOne({ address: tokenDto.address })
-      .exec();
+    const user = await this.userModel.findOne({
+      where: { address: tokenDto.address },
+    });
     const isVerified = this.verifySignature({
       user,
       signature: tokenDto.signature,
@@ -125,7 +118,7 @@ export class AuthService {
     if (isVerified) {
       const payload = {
         address: tokenDto.address,
-        sub: user._id.toString(),
+        sub: user.id.toString(),
       };
       // update new nonce
       user.nonce = Math.floor(Math.random() * 1000000);
@@ -152,7 +145,7 @@ export class AuthService {
   async tokenLogin(jwt: string): Promise<UserDto> {
     try {
       const { sub, exp }: iInfoToken = jwt_decode(jwt);
-      const user = await this.userModel.findById(sub);
+      const user = await this.userModel.findOne({ where: { id: sub } });
       if (exp > Date.now()) {
         throw new UnauthorizedException('Token has expired');
       }

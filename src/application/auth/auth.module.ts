@@ -1,14 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { RequestContext } from 'src/config/requestcontext';
-import {
-  BlackList,
-  BlackListSchema,
-} from '../../domain/models/blacklist.model';
-import { User, UserSchema } from '../../domain/models/user.model';
+import { blacklistsProvider } from 'src/domain/models';
+import { usersProvider } from '../../domain/models/user.model';
+import { DatabaseModule } from '../database/database.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
@@ -26,13 +23,10 @@ import { JwtStrategy } from './jwt.strategy';
       inject: [ConfigService],
     }),
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    MongooseModule.forFeature([
-      { name: User.name, schema: UserSchema },
-      { name: BlackList.name, schema: BlackListSchema },
-    ]),
     RequestContext,
+    DatabaseModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, usersProvider, blacklistsProvider],
 })
 export class AuthModule {}

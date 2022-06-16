@@ -1,72 +1,38 @@
-import { AutoMap } from '@automapper/classes';
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ApiProperty } from '@nestjs/swagger';
-import { Document } from 'mongoose';
-import { Role } from './enum';
-export type UserDocument = User & Document;
+import { Column, Model, Table } from 'sequelize-typescript';
 
-@Schema({
-  collection: 'users',
-  timestamps: true,
-  toJSON: {
-    transform: function (doc, ret) {
-      ret.id = ret._id;
-      delete ret._id;
-      delete ret.__v;
-      return ret;
-    },
-  },
-})
-export class User {
-  @ApiProperty()
-  @Prop()
-  @AutoMap()
+@Table
+export class User extends Model {
+  @Column
   email: string;
 
-  @ApiProperty()
-  @Prop({ default: false })
-  @AutoMap()
+  @Column
   emailVerified: boolean;
 
-  @ApiProperty()
-  @Prop({ required: true })
-  @AutoMap()
+  @Column
   address: string;
 
-  @ApiProperty()
-  @Prop()
-  @AutoMap()
+  @Column
   username: string;
 
-  @ApiProperty()
-  @Prop()
-  @AutoMap()
+  @Column
   avatar: string;
 
-  @ApiProperty()
-  @Prop()
-  @AutoMap()
+  @Column
   cover: string;
 
-  @ApiProperty()
-  @Prop()
-  @AutoMap()
+  @Column
   nonce: number;
 
-  @ApiProperty()
-  @Prop()
-  @AutoMap()
+  @Column
   bio: string;
 
-  @ApiProperty()
-  @Prop()
-  @AutoMap()
+  @Column
   playerId: string;
 
-  @ApiProperty()
-  @Prop({ enum: Role, type: [String], default: [Role.User] })
-  @AutoMap()
-  roles: Role[];
+  @Column
+  roles: string;
 }
-
-export const UserSchema = SchemaFactory.createForClass(User);
+export const usersProvider = {
+  provide: User.name,
+  useValue: User,
+};

@@ -1,5 +1,6 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { Role } from 'src/domain/models/enum';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
@@ -37,8 +38,8 @@ export class HealthController {
       ],
     },
   })
-  @UseGuards(RolesGuard)
-  @Roles('admin')
+  // @UseGuards(RolesGuard)
+  // @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT')
   getHealthLiveness(): any {
