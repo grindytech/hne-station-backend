@@ -9,6 +9,6 @@ export class GetProposalsDto extends BaseQueryParams {
   @ApiProperty({ required: false })
   proposalId: string;
 
-  @ApiProperty({ type: Number, required: false })
-  status: ProposalStatus;
+  @ApiProperty({ type: [Number], required: false })
+  status: ProposalStatus[];
 }
