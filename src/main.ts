@@ -7,8 +7,8 @@ import { HttpExceptionFilter } from './filters/exception.filter';
 
 function configureSwagger(app: INestApplication) {
   const swaggerDocOptions = new DocumentBuilder()
-    .setTitle('User-service')
-    .setDescription('The user-service API description')
+    .setTitle('Station-service')
+    .setDescription('The Station-service API description')
     .setVersion('1.0.0')
     .addBearerAuth(
       {
@@ -41,8 +41,6 @@ function configureValidation(app: INestApplication) {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  // const globalPrefix = 'api';
-  // app.setGlobalPrefix(globalPrefix);
   app.enableCors();
   configureSwagger(app);
   configureValidation(app);

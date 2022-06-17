@@ -1,6 +1,9 @@
+import { Logger } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 import configuration from 'src/config/configuration';
-import { BlackList, User } from 'src/domain/models';
+import { models } from 'src/domain/models';
+
+const databaseLogger = new Logger('DataBaseModule');
 
 export const databaseProviders = [
   {
@@ -10,8 +13,9 @@ export const databaseProviders = [
       const sequelize = new Sequelize({
         dialect: 'mysql',
         ...db,
+        logging: (sql) => databaseLogger.debug(sql),
       });
-      sequelize.addModels([User, BlackList]);
+      sequelize.addModels(models);
       await sequelize.sync();
       return sequelize;
     },

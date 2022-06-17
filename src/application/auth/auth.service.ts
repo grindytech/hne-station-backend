@@ -13,7 +13,6 @@ import jwt_decode from 'jwt-decode';
 
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/types';
-import { deserialize } from 'class-transformer';
 import { iInfoToken } from 'src/config/requestcontext';
 import { UserDto } from 'src/domain/dtos';
 import { BlackList } from '../../domain/models/blacklist.model';
@@ -28,14 +27,14 @@ export class AuthService {
     private readonly blackListModel: typeof BlackList,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-    @InjectMapper()
-    private readonly userMapper: Mapper,
+    @InjectMapper('')
+    private readonly mapper: Mapper,
   ) {}
   private logger = new Logger(AuthService.name);
-  async getUserByAddress(address: string): Promise<User> {
+  async getUserByAddress(address: string): Promise<UserDto> {
     const user = await this.userModel.findOne({ where: { address } });
     if (user) {
-      return user;
+      return this.mapper.mapAsync(user, UserDto, User);
     }
     const newUser = new this.userModel({
       nonce: Math.floor(Math.random() * 1000000),
@@ -43,7 +42,7 @@ export class AuthService {
       username: address,
     });
     await newUser.save();
-    return newUser;
+    return this.mapper.mapAsync(newUser, UserDto, User);
   }
 
   verifySignature({
@@ -149,8 +148,7 @@ export class AuthService {
       if (exp > Date.now()) {
         throw new UnauthorizedException('Token has expired');
       }
-      const autoUser = deserialize(User, JSON.stringify(user));
-      const userDto = await this.userMapper.mapAsync(autoUser, UserDto, User);
+      const userDto = await this.mapper.mapAsync(user, UserDto, User);
       return userDto;
     } catch (error) {
       this.logger.error(error);

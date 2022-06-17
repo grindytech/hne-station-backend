@@ -18,3 +18,20 @@ export enum Role {
   Admin = 'admin',
   User = 'user',
 }
+
+export enum ProposalStatus {
+  Init = 1,
+  Reject = 2,
+  Deposit = 3,
+  DepositNotEnough = 4,
+  Voting = 5,
+  Passed = 6,
+  Failed = 7,
+  Veto = 8,
+}
+
+export enum VoteType {
+  Pass = 1,
+  Fail = 2,
+  Veto = 3,
+}

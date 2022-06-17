@@ -2,42 +2,62 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: account
-  name: account
-  # namespace: he
+    app: station
+  name: station
+  namespace: he-station
 spec:
   replicas: 2
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: account
+      app: station
   strategy: {}
   template:
     metadata:
       labels:
-        app: account
+        app: station
     spec:
       containers:
-        - name: account
-          image: dttr278/dev:hne-node-account-service-v2.1.11
+        - name: station
+          image: dttr278/dev:he-station-v0.0.1
           # imagePullPolicy: "Always"
           ports:
             - containerPort: 3000
           resources:
             requests:
-              memory: "0.25Gi"
-              cpu: "250m"
+              memory: '0.25Gi'
+              cpu: '250m'
             limits:
-              memory: "0.25Gi"
-              cpu: "250m"
+              memory: '0.25Gi'
+              cpu: '250m'
           env:
             - name: PORT
-              value: "3000"
-            - name: MONGODB_URI
+              value: '3000'
+            - name: DB_HOST
               valueFrom:
                 secretKeyRef:
                   name: he-secrets
-                  key: MARKETPLACE_MONGODB_URI
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: he-secrets
+                  key: DB_PORT
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: he-secrets
+                  key: DB_USERNAME
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: he-secrets
+                  key: DB_PASSWORD
+            - name: DB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: he-secrets
+                  key: DB_DATABASE
             - name: SECRET_KEY
               valueFrom:
                 secretKeyRef:
@@ -49,7 +69,7 @@ spec:
                   name: he-secrets
                   key: X_API_KEY
             - name: SIGN_OPTIONS
-              value: "24h"
+              value: '24h'
             - name: WEB3_HTTP_URL
               value: http://rpc2.hne.to
       imagePullSecrets:
@@ -60,27 +80,26 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: account-service
-  namespace: he
+  name: station-service
+  namespace: he-station
 spec:
   selector:
-    app: account
+    app: station
   ports:
     - protocol: TCP
       port: 80
       targetPort: 3000
 
-
 ---
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: account
-  namespace: he
+  name: station
+  namespace: he-station
 spec:
   scaleTargetRef:
     kind: Deployment
-    name: account
+    name: station
     apiVersion: apps/v1
   minReplicas: 2
   maxReplicas: 10

@@ -15,9 +15,10 @@ export class RolesGuard implements CanActivate {
     return matchRoles(roles, user.roles);
   }
 }
-function matchRoles(roles: string[], userRoles: string[]): boolean {
+function matchRoles(roles: string[], userRoles: string): boolean {
+  const userRolesArray = userRoles.split(',');
   for (const role of roles) {
-    if (userRoles.includes(role)) return true;
+    if (userRolesArray.includes(role)) return true;
   }
   return false;
 }

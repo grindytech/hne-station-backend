@@ -10,6 +10,9 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '../../domain/models/user.model';
 import { UpdateUserDto } from './dto';
 import { UploadService } from '../shared/services';
+import { Mapper } from '@automapper/types';
+import { InjectMapper } from '@automapper/nestjs';
+import { UserDto } from 'src/domain/dtos';
 
 @Injectable()
 export class ProfileService {
@@ -17,16 +20,20 @@ export class ProfileService {
     @Inject(User.name) private readonly userModel: typeof User,
     private jwtService: JwtService,
     private uploadService: UploadService,
+    @InjectMapper('')
+    private mapper: Mapper,
   ) {}
 
-  async getProfileByAddress(address: string): Promise<User> {
+  async getProfileByAddress(address: string): Promise<UserDto> {
     const user = await this.userModel.findOne({ where: { address } });
     if (!user) {
       throw new NotFoundException('user is not found');
     }
-    return user;
+    const userDto = await this.mapper.mapAsync(user, UserDto, User);
+    delete userDto.roles;
+    return userDto;
   }
-  async updateProfile(updateUserDto: UpdateUserDto): Promise<User> {
+  async updateProfile(updateUserDto: UpdateUserDto): Promise<UserDto> {
     const { address, avatar, cover, email, username, bio, playerId } =
       updateUserDto;
     const user = await this.userModel.findOne({ where: { address } });
@@ -61,6 +68,13 @@ export class ProfileService {
     user.playerId = playerId;
     user.username = username;
     const newUser = await user.save();
-    return newUser;
+    const userDto = await this.mapper.mapAsync(newUser, UserDto, User);
+    delete userDto.roles;
+    return userDto;
+  }
+
+  async toUserDto(user: User) {
+    const userDto = await this.mapper.mapAsync(user, UserDto, User);
+    return userDto;
   }
 }

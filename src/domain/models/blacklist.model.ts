@@ -1,8 +1,13 @@
 import { Column, Model, Table } from 'sequelize-typescript';
 
-@Table
+@Table({ modelName: 'blacklists' })
 export class BlackList extends Model {
-  @Column
+  @Column({
+    set: function (this: Model, val: any) {
+      this.setDataValue('address', String(val).toLocaleLowerCase());
+    },
+    allowNull: false,
+  })
   address: string;
 }
 

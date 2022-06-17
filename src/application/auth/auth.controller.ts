@@ -16,16 +16,14 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger';
 import { iInfoToken } from 'src/config/requestcontext';
-import { UserDto } from 'src/domain/dtos';
+import { BaseResult, UserDto } from 'src/domain/dtos';
 import { AuthService } from './auth.service';
 import { GetNonceDto, GetTokenDto, TokenLoginDto } from './dto';
 import { XApiKeyGuard } from './header-x-api-key.guard';
 
 @Controller('authentication')
 @ApiTags('Authentication')
-@ApiExtraModels(iInfoToken)
-@ApiExtraModels(UserDto)
-@ApiExtraModels(TokenLoginDto)
+@ApiExtraModels(UserDto, TokenLoginDto, iInfoToken, BaseResult)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -33,44 +31,36 @@ export class AuthController {
   @ApiOkResponse({
     schema: {
       allOf: [
+        { $ref: getSchemaPath(BaseResult) },
         {
           properties: {
-            success: { type: 'boolean' },
             data: {
-              properties: {
-                address: { type: 'string' },
-                nonce: { type: 'number' },
-              },
+              $ref: getSchemaPath(UserDto),
             },
-            errors: { type: 'object' },
           },
         },
       ],
     },
   })
-  async getNonce(@Query() query: GetNonceDto): Promise<any> {
-    console.log(query);
+  async getNonce(@Query() query: GetNonceDto): Promise<BaseResult<UserDto>> {
     const user = await this.authService.getUserByAddress(query.address);
-    return {
-      success: true,
-      data: { address: query.address, nonce: user.nonce },
-      errors: [],
-    };
+    const rs = new BaseResult<UserDto>();
+    rs.data = user;
+    return rs;
   }
 
   @Post('token')
   @ApiOkResponse({
     schema: {
       allOf: [
+        { $ref: getSchemaPath(BaseResult) },
         {
           properties: {
-            success: { type: 'boolean' },
             data: {
               properties: {
                 accessToken: { type: 'string' },
               },
             },
-            errors: { type: 'object' },
           },
         },
       ],
@@ -78,54 +68,53 @@ export class AuthController {
   })
   async getToken(@Body() tokenDto: GetTokenDto): Promise<any> {
     const accessToken = await this.authService.generateToken(tokenDto);
-    return {
-      success: true,
-      data: { accessToken },
-      errors: [],
-    };
+    const rs = new BaseResult<string>();
+    rs.data = accessToken;
+    return rs;
   }
   @Post('token/decode')
   @ApiOkResponse({
     schema: {
       allOf: [
+        { $ref: getSchemaPath(BaseResult) },
         {
           properties: {
-            success: { type: 'boolean' },
             data: {
               $ref: getSchemaPath(iInfoToken),
             },
-            errors: { type: 'object' },
           },
         },
       ],
     },
   })
-  async getTokenDecode(@Body() jwt: TokenLoginDto): Promise<any> {
+  async getTokenDecode(
+    @Body() jwt: TokenLoginDto,
+  ): Promise<BaseResult<iInfoToken>> {
     const info = await this.authService.jwtDecode(jwt.token);
-    return {
-      success: true,
-      data: info,
-      errors: [],
-    };
+    const rs = new BaseResult<iInfoToken>();
+    rs.data = info;
+    return rs;
   }
   @Post('/token/login')
   @ApiOkResponse({
     schema: {
       allOf: [
+        { $ref: getSchemaPath(BaseResult) },
         {
           properties: {
-            success: { type: 'boolean' },
             data: {
               $ref: getSchemaPath(UserDto),
             },
-            errors: { type: 'object' },
           },
         },
       ],
     },
   })
-  async tokenLogin(@Body() jwt: TokenLoginDto): Promise<UserDto> {
-    return await this.authService.tokenLogin(jwt.token);
+  async tokenLogin(@Body() jwt: TokenLoginDto): Promise<BaseResult<UserDto>> {
+    const user = await this.authService.tokenLogin(jwt.token);
+    const rs = new BaseResult<UserDto>();
+    rs.data = user;
+    return rs;
   }
 
   // @UseGuards(JwtAuthGuard)
@@ -139,11 +128,12 @@ export class AuthController {
   @ApiOkResponse({
     schema: {
       allOf: [
+        { $ref: getSchemaPath(BaseResult) },
         {
           properties: {
-            success: { type: 'boolean' },
-            data: { type: 'string' },
-            errors: { type: 'object' },
+            data: {
+              type: 'string',
+            },
           },
         },
       ],
@@ -151,13 +141,11 @@ export class AuthController {
   })
   async createAuthenticationBlacklist(
     @Param('address') address: string,
-  ): Promise<any> {
+  ): Promise<BaseResult<string>> {
+    const rs = new BaseResult<string>();
     const id = await this.authService.createBlackList(address);
-    return {
-      success: true,
-      data: id,
-      errors: [],
-    };
+    rs.data = id;
+    return rs;
   }
 
   // @UseGuards(JwtAuthGuard)
@@ -171,22 +159,23 @@ export class AuthController {
   @ApiOkResponse({
     schema: {
       allOf: [
+        { $ref: getSchemaPath(BaseResult) },
         {
           properties: {
-            success: { type: 'boolean' },
-            data: { type: 'string' },
-            errors: { type: 'object' },
+            data: {
+              type: 'string',
+            },
           },
         },
       ],
     },
   })
-  async removeAuthenticationBlackList(@Param('address') address: string) {
+  async removeAuthenticationBlackList(
+    @Param('address') address: string,
+  ): Promise<BaseResult<string>> {
+    const rs = new BaseResult<string>();
     const id = await this.authService.removeBlackList(address);
-    return {
-      success: true,
-      data: id,
-      errors: [],
-    };
+    rs.data = id;
+    return rs;
   }
 }

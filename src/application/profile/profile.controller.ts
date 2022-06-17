@@ -21,12 +21,12 @@ import {
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger';
-import { User } from '../../domain/models/user.model';
+import { BaseResult, UserDto } from 'src/domain/dtos';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ProfileService } from './profile.service';
 @Controller()
 @ApiTags('Profile')
-@ApiExtraModels(User)
+@ApiExtraModels(UserDto, BaseResult)
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
@@ -34,19 +34,20 @@ export class ProfileController {
   @ApiOkResponse({
     schema: {
       allOf: [
+        { $ref: getSchemaPath(BaseResult) },
         {
           properties: {
-            success: { type: 'boolean' },
-            data: { $ref: getSchemaPath(User) },
-            errors: { type: 'object' },
+            data: { $ref: getSchemaPath(UserDto) },
           },
         },
       ],
     },
   })
   async getProfileByAddress(@Param('address') address: string) {
+    const rs = new BaseResult<UserDto>();
     const user = await this.profileService.getProfileByAddress(address);
-    return { success: true, errors: [], data: user };
+    rs.data = user;
+    return rs;
   }
 
   @UseGuards(JwtAuthGuard)
@@ -54,23 +55,20 @@ export class ProfileController {
   @ApiOkResponse({
     schema: {
       allOf: [
+        { $ref: getSchemaPath(BaseResult) },
         {
           properties: {
-            success: { type: 'boolean' },
-            data: {
-              type: 'string',
-            },
-            errors: { type: 'object' },
+            data: { $ref: getSchemaPath(UserDto) },
           },
         },
       ],
     },
   })
   @Get('profile')
-  getProfile(@Request() req, @Response() res) {
-    return res
-      .status(HttpStatus.OK)
-      .json({ data: req.user, success: true, errors: [] });
+  async getProfile(@Request() req, @Response() res) {
+    const rs = new BaseResult<UserDto>();
+    rs.data = await this.profileService.toUserDto(req.user);
+    return res.status(HttpStatus.OK).json(rs);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -78,11 +76,10 @@ export class ProfileController {
   @ApiOkResponse({
     schema: {
       allOf: [
+        { $ref: getSchemaPath(BaseResult) },
         {
           properties: {
-            success: { type: 'boolean' },
-            data: { $ref: getSchemaPath(User) },
-            errors: { type: 'object' },
+            data: { $ref: getSchemaPath(UserDto) },
           },
         },
       ],
@@ -97,22 +94,14 @@ export class ProfileController {
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
-      type: 'object',
-      properties: {
-        username: { type: 'string' },
-        bio: { type: 'string' },
-        playerId: { type: 'string' },
-        email: { type: 'string' },
-        address: { type: 'string' },
-        avatar: {
-          type: 'string',
-          format: 'binary',
+      allOf: [
+        { $ref: getSchemaPath(BaseResult) },
+        {
+          properties: {
+            data: { $ref: getSchemaPath(UserDto) },
+          },
         },
-        cover: {
-          type: 'string',
-          format: 'binary',
-        },
-      },
+      ],
     },
   })
   async updateProfile(
@@ -123,7 +112,7 @@ export class ProfileController {
       cover?: Express.Multer.File[];
     },
 
-    @Body() body,
+    @Body() body: UserDto,
     @Response() res,
   ) {
     const avatar = files.avatar ? files.avatar[0] : null;
@@ -139,8 +128,8 @@ export class ProfileController {
       email,
       address,
     });
-    return res
-      .status(HttpStatus.OK)
-      .json({ data: newUser, status: true, errors: [] });
+    const rs = new BaseResult<UserDto>();
+    rs.data = newUser;
+    return res.status(HttpStatus.OK).json(rs);
   }
 }

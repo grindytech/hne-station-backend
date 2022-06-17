@@ -5,4 +5,5 @@ function getEnumValue(enumType, key: string | string[]) {
     return enumType[key];
   }
 }
+
 export default { getEnumValue };
