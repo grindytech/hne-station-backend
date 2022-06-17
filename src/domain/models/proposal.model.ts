@@ -27,22 +27,22 @@ export class Proposal extends Model {
 
   @Column
   //init amount
-  initial: number;
+  initial: string;
 
   @Column
-  deposit: number;
+  deposit: string;
 
   @Column({ type: INTEGER })
   status: ProposalStatus;
 
   @Column
-  votesPassed: number;
+  votesPassed: string;
 
   @Column
-  votesFail: number;
+  votesFail: string;
 
   @Column
-  votesVeto: number;
+  votesVeto: string;
 
   @Column
   blockTime: Date;

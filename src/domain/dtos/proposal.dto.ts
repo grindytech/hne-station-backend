@@ -23,11 +23,11 @@ export class ProposalDto extends BaseDocumentDto {
   @ApiProperty()
   @AutoMap()
   //init amount
-  initial: number;
+  initial: string;
 
   @ApiProperty()
   @AutoMap()
-  deposit: number;
+  deposit: string;
 
   @ApiProperty({ type: Number, enum: ProposalStatus })
   @AutoMap()
@@ -35,15 +35,15 @@ export class ProposalDto extends BaseDocumentDto {
 
   @ApiProperty()
   @AutoMap()
-  votesPassed: number;
+  votesPassed: string;
 
   @ApiProperty()
   @AutoMap()
-  votesFail: number;
+  votesFail: string;
 
   @ApiProperty()
   @AutoMap()
-  votesVeto: number;
+  votesVeto: string;
 
   @ApiProperty()
   @AutoMap()
