@@ -22,8 +22,9 @@ export class BaseQueryParams {
     return this.size * (this.page - 1);
   }
   public get sort() {
-    const order: any = {};
-    order[this.orderBy ?? 'createdAt'] = this.desc === 'asc' ? 'asc' : 'desc';
+    const order: any = [];
+    order.push(this.orderBy ?? 'createdAt');
+    order.push('asc' ? 'asc' : 'desc');
     return order;
   }
 }

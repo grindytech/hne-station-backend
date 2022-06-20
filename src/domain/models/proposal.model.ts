@@ -1,4 +1,4 @@
-import { INTEGER, STRING } from 'sequelize';
+import { DOUBLE, INTEGER, STRING } from 'sequelize';
 import { Column, Model, PrimaryKey, Table } from 'sequelize-typescript';
 import { ProposalStatus } from './enum';
 
@@ -25,24 +25,23 @@ export class Proposal extends Model {
   @Column({ type: STRING(1000) })
   description: string;
 
-  @Column
-  //init amount
-  initial: string;
+  @Column({ type: DOUBLE({ unsigned: true }) })
+  initial: number;
 
-  @Column
-  deposit: string;
+  @Column({ type: DOUBLE({ unsigned: true }) })
+  deposit: number;
 
   @Column({ type: INTEGER })
   status: ProposalStatus;
 
-  @Column
-  votesPassed: string;
+  @Column({ type: DOUBLE({ unsigned: true }) })
+  votesPassed: number;
 
-  @Column
-  votesFail: string;
+  @Column({ type: DOUBLE({ unsigned: true }) })
+  votesFail: number;
 
-  @Column
-  votesVeto: string;
+  @Column({ type: DOUBLE({ unsigned: true }) })
+  votesVeto: number;
 
   @Column
   blockTime: Date;

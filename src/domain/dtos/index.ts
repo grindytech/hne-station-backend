@@ -7,3 +7,4 @@ export * from './base.result';
 export * from './base.result.pagination';
 export * from './user.dto';
 export * from './basicuser.dto';
+export * from './vote.dto';
