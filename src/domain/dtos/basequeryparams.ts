@@ -24,7 +24,7 @@ export class BaseQueryParams {
   public get sort() {
     const order: any = [];
     order.push(this.orderBy ?? 'createdAt');
-    order.push('asc' ? 'asc' : 'desc');
+    order.push(this.desc ?? 'asc');
     return order;
   }
 }
