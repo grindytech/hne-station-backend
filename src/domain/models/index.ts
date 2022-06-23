@@ -14,4 +14,14 @@ export const models = [User, BlackList, Proposal, Deposit, Vote];
 export const modelsReferences = () => {
   Proposal.hasMany(Deposit, { foreignKey: 'proposalID' });
   Proposal.hasMany(Vote, { foreignKey: 'proposalID' });
+  Deposit.hasOne(Proposal, {
+    foreignKey: 'proposalID',
+    sourceKey: 'proposalID',
+  });
+  Deposit.belongsTo(Proposal, { foreignKey: 'proposalID' });
+  Vote.hasOne(Proposal, {
+    foreignKey: 'proposalID',
+    sourceKey: 'proposalID',
+  });
+  Vote.belongsTo(Proposal, { foreignKey: 'proposalID' });
 };

@@ -13,6 +13,7 @@ import {
 import { DatabaseModule } from '../database/database.module';
 import { GetVotedProposalsDto } from './dtos/get.votedProposals.dto';
 import { ProposalService } from './proposal.service';
+import { GetDepositsDto } from './dtos';
 
 describe('ProposalService', () => {
   let service: ProposalService;
@@ -46,19 +47,26 @@ describe('ProposalService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
-  it('getVotedProposals is working', async () => {
-    const query = new GetVotedProposalsDto();
-    query.userAddress = '0x5Bea1FE8a1167d71E673dcDeFFC0Ee4E8BaF5f07';
-    query.status = Object.values(ProposalStatus) as any;
-    const votesProposals = await service.getVotedProposals(query);
-    console.log(JSON.stringify(votesProposals));
-    expect(votesProposals).toBeDefined();
-  });
-  it('getDepositedProposals is working', async () => {
-    const query = new GetVotedProposalsDto();
-    query.userAddress = '0x5Bea1FE8a1167d71E673dcDeFFC0Ee4E8BaF5f07';
-    query.status = Object.values(ProposalStatus) as any;
-    const votesProposals = await service.getDepositedProposals(query);
+  // it('getVotedProposals is working', async () => {
+  //   const query = new GetVotedProposalsDto();
+  //   query.userAddress = '0x5Bea1FE8a1167d71E673dcDeFFC0Ee4E8BaF5f07';
+  //   query.status = Object.values(ProposalStatus) as any;
+  //   const votesProposals = await service.getVotedProposals(query);
+  //   console.log(JSON.stringify(votesProposals));
+  //   expect(votesProposals).toBeDefined();
+  // });
+  // it('getDepositedProposals is working', async () => {
+  //   const query = new GetVotedProposalsDto();
+  //   query.userAddress = '0x5Bea1FE8a1167d71E673dcDeFFC0Ee4E8BaF5f07';
+  //   query.status = Object.values(ProposalStatus) as any;
+  //   const votesProposals = await service.getDepositedProposals(query);
+  //   console.log(JSON.stringify(votesProposals));
+  //   expect(votesProposals).toBeDefined();
+  // });
+
+  it('getDeposits is working', async () => {
+    const query = new GetDepositsDto();
+    const votesProposals = await service.getDeposits(query);
     console.log(JSON.stringify(votesProposals));
     expect(votesProposals).toBeDefined();
   });

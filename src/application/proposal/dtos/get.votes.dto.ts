@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BaseQueryParams } from 'src/domain/dtos';
-import { VoteType } from 'src/domain/models/enum';
+import { BaseQueryParams } from '../../../domain/dtos';
+import { VoteType } from '../../../domain/models/enum';
 
 export class GetVotesDto extends BaseQueryParams {
   @ApiProperty({ required: false })

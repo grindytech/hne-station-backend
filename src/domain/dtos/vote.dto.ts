@@ -2,6 +2,7 @@ import { AutoMap } from '@automapper/classes';
 import { ApiProperty } from '@nestjs/swagger';
 import { VoteType } from '../models/enum';
 import { BaseDocumentDto } from './basedocumentdto';
+import { ProposalDto } from './proposal.dto';
 
 export class VoteDto extends BaseDocumentDto {
   @ApiProperty()
@@ -27,4 +28,8 @@ export class VoteDto extends BaseDocumentDto {
   @ApiProperty()
   @AutoMap()
   type: VoteType;
+
+  @ApiProperty()
+  @AutoMap({ typeFn: () => ProposalDto })
+  proposal: ProposalDto;
 }

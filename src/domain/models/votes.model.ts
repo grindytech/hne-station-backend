@@ -1,3 +1,4 @@
+import { AutoMap } from '@automapper/classes';
 import { DOUBLE, INTEGER } from 'sequelize';
 import { Column, Model, Table } from 'sequelize-typescript';
 import { VoteType } from './enum';
@@ -27,6 +28,9 @@ export class Vote extends Model {
 
   @Column({ type: INTEGER })
   type: VoteType;
+
+  @AutoMap()
+  proposal: Proposal;
 }
 export const votesProvider = {
   provide: Vote.name,

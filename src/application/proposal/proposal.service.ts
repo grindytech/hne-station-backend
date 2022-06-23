@@ -77,6 +77,7 @@ export class ProposalService {
     }
     const { rows, count } = await this.depositModel.findAndCountAll({
       where,
+      include: [Proposal],
       limit: query.size,
       offset: query.skipIndex,
       order: [query.sort],
@@ -151,6 +152,7 @@ export class ProposalService {
     }
     const { rows, count } = await this.voteModel.findAndCountAll({
       where,
+      include: [Proposal],
       limit: query.size,
       offset: query.skipIndex,
       order: [query.sort],

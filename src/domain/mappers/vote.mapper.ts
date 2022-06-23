@@ -3,8 +3,8 @@ import { AutomapperProfile, InjectMapper } from '@automapper/nestjs';
 import type { Mapper } from '@automapper/types';
 import { Injectable } from '@nestjs/common';
 import 'reflect-metadata';
-import { VoteDto } from '../dtos';
-import { Vote } from '../models';
+import { ProposalDto, VoteDto } from '../dtos';
+import { Proposal, Vote } from '../models';
 
 @Injectable()
 export class VoteMapper extends AutomapperProfile {
@@ -14,7 +14,9 @@ export class VoteMapper extends AutomapperProfile {
   mapProfile() {
     return (mapper) => {
       mapper
-        .createMap(Vote, VoteDto)
+        .createMap(Vote, VoteDto, {
+          extends: [mapper.getMapping(Proposal, ProposalDto)],
+        })
         .forMember(
           (des) => des.id,
           mapFrom((src) => src.id),

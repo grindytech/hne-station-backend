@@ -1,3 +1,4 @@
+import { AutoMap } from '@automapper/classes';
 import { DOUBLE } from 'sequelize';
 import { Column, Model, Table } from 'sequelize-typescript';
 import { Proposal } from './proposal.model';
@@ -23,6 +24,9 @@ export class Deposit extends Model {
 
   @Column
   block: number;
+
+  @AutoMap()
+  proposal: Proposal;
 }
 export const depositsProvider = {
   provide: Deposit.name,

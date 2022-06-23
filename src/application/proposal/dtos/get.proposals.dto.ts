@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BaseQueryParams } from 'src/domain/dtos';
-import { ProposalStatus } from 'src/domain/models/enum';
+import { BaseQueryParams } from '../../../domain/dtos';
+import { ProposalStatus } from '../../../domain/models/enum';
 
 export class GetProposalsDto extends BaseQueryParams {
   @ApiProperty({ required: false })
