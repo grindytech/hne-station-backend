@@ -75,6 +75,30 @@ export class ProposalController {
     return await this.proposalService.getVotedProposals(query);
   }
 
+  @Get('deposited-proposals')
+  @ApiOkResponse({
+    schema: {
+      allOf: [
+        { $ref: getSchemaPath(BaseResultPagination) },
+        {
+          properties: {
+            data: {
+              properties: {
+                items: {
+                  type: 'array',
+                  items: { $ref: getSchemaPath(ProposalDto) },
+                },
+              },
+            },
+          },
+        },
+      ],
+    },
+  })
+  async getDepositedProposals(@Query() query: GetVotedProposalsDto) {
+    return await this.proposalService.getDepositedProposals(query);
+  }
+
   @Get('depositors')
   @ApiOkResponse({
     schema: {

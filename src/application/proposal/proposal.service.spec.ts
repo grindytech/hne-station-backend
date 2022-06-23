@@ -54,4 +54,12 @@ describe('ProposalService', () => {
     console.log(JSON.stringify(votesProposals));
     expect(votesProposals).toBeDefined();
   });
+  it('getDepositedProposals is working', async () => {
+    const query = new GetVotedProposalsDto();
+    query.userAddress = '0x5Bea1FE8a1167d71E673dcDeFFC0Ee4E8BaF5f07';
+    query.status = Object.values(ProposalStatus) as any;
+    const votesProposals = await service.getDepositedProposals(query);
+    console.log(JSON.stringify(votesProposals));
+    expect(votesProposals).toBeDefined();
+  });
 });
