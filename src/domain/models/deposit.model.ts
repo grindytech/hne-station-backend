@@ -1,14 +1,12 @@
-import { AutoMap } from '@automapper/classes';
-import { DOUBLE, INTEGER } from 'sequelize';
+import { DOUBLE } from 'sequelize';
 import { Column, Model, Table } from 'sequelize-typescript';
+import { Proposal } from './proposal.model';
 
 @Table({ modelName: 'deposits' })
 export class Deposit extends Model {
-  @AutoMap()
-  @Column
+  @Column({ references: { model: Proposal, key: 'proposalID' } })
   proposalID: string;
 
-  @AutoMap()
   @Column({
     set: function (this: Model, val: any) {
       this.setDataValue('userAddress', String(val).toLocaleLowerCase());
@@ -17,19 +15,15 @@ export class Deposit extends Model {
   })
   userAddress: string;
 
-  @AutoMap()
   @Column({ type: DOUBLE({ unsigned: true }) })
   amount: number;
 
-  @AutoMap()
   @Column
   txHash: string;
 
-  @AutoMap()
   @Column
   block: number;
 }
-
 export const depositsProvider = {
   provide: Deposit.name,
   useValue: Deposit,

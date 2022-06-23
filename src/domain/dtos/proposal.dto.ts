@@ -68,4 +68,12 @@ export class ProposalDto extends BaseDocumentDto {
   @ApiProperty()
   @AutoMap()
   txHash: string;
+
+  @ApiProperty()
+  @AutoMap()
+  amount: number;
+
+  @ApiProperty()
+  @AutoMap()
+  userAddress: string;
 }

@@ -1,15 +1,13 @@
-import { AutoMap } from '@automapper/classes';
 import { DOUBLE, INTEGER } from 'sequelize';
 import { Column, Model, Table } from 'sequelize-typescript';
 import { VoteType } from './enum';
+import { Proposal } from './proposal.model';
 
 @Table({ modelName: 'votes' })
 export class Vote extends Model {
-  @AutoMap()
-  @Column
+  @Column({ references: { model: Proposal, key: 'proposalID' } })
   proposalID: string;
 
-  @AutoMap()
   @Column({
     set: function (this: Model, val: any) {
       this.setDataValue('userAddress', String(val).toLocaleLowerCase());
@@ -18,23 +16,18 @@ export class Vote extends Model {
   })
   userAddress: string;
 
-  @AutoMap()
   @Column({ type: DOUBLE({ unsigned: true }) })
   amount: number;
 
-  @AutoMap()
   @Column
   txHash: string;
 
-  @AutoMap()
   @Column
   block: number;
 
-  @AutoMap()
   @Column({ type: INTEGER })
   type: VoteType;
 }
-
 export const votesProvider = {
   provide: Vote.name,
   useValue: Vote,

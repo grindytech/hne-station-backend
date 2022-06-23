@@ -8,3 +8,5 @@ export * from './base.result.pagination';
 export * from './user.dto';
 export * from './basicuser.dto';
 export * from './vote.dto';
+export * from './deposit.dto';
+export * from './proposal.dto';

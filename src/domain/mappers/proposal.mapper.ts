@@ -26,6 +26,14 @@ export class ProposalMapper extends AutomapperProfile {
         .forMember(
           (des) => des.updatedAt,
           mapFrom((src) => src.updatedAt),
+        )
+        .forMember(
+          (des) => des.amount,
+          mapFrom((src) => src.amount),
+        )
+        .forMember(
+          (des) => des.userAddress,
+          mapFrom((src) => src.userAddress),
         );
     };
   }

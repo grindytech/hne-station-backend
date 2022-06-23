@@ -60,7 +60,14 @@ export class Proposal extends Model {
 
   @Column
   txHash: string;
+
+  @Column({ type: DOUBLE({ unsigned: true }) })
+  totalStake: string;
+
+  amount: number;
+  userAddress: string;
 }
+
 export const proposalsProvider = {
   provide: Proposal.name,
   useValue: Proposal,

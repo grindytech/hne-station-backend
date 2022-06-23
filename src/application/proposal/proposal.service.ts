@@ -3,11 +3,16 @@ import { Mapper } from '@automapper/types';
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import sequelize, { QueryTypes } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
-import { BaseResultPagination, PaginationDto, VoteDto } from 'src/domain/dtos';
-import { DepositDto } from 'src/domain/dtos/deposit.dto';
-import { ProposalDto } from 'src/domain/dtos/proposal.dto';
-import { Deposit, Proposal, Vote } from 'src/domain/models';
+import {
+  BaseResultPagination,
+  DepositDto,
+  PaginationDto,
+  ProposalDto,
+  VoteDto,
+} from '../../domain/dtos';
+import { Deposit, Proposal, Vote } from '../../domain/models';
 import { GetDepositsDto, GetProposalsDto, GetVotesDto } from './dtos';
+import { GetVotedProposalsDto } from './dtos/get.votedProposals.dto';
 
 @Injectable()
 export class ProposalService {
@@ -198,6 +203,63 @@ export class ProposalService {
 
     const data = new PaginationDto<VoteDto>(
       votesDto,
+      Number(count[0]['total']),
+      query.page,
+      query.size,
+    );
+    rs.data = data;
+    return rs;
+  }
+
+  async getVotedProposals(
+    query: GetVotedProposalsDto,
+  ): Promise<BaseResultPagination<ProposalDto>> {
+    const where: any = {};
+    if (query.status)
+      where.status = Array.isArray(query.status)
+        ? query.status
+        : [query.status];
+    if (query.userAddress) where.userAddress = query.userAddress;
+
+    const count = await this.database.query(
+      `select count(*) as total from proposals p where proposalID in
+        (SELECT proposalId from votes 
+        where 1=1
+        ${where.userAddress ? `and userAddress = '${where.userAddress}'` : ''}
+        group by proposalId)
+         ${
+           where.status && where.status.length > 0
+             ? `and status in ('${where.status.join("','")}')`
+             : ''
+         }`,
+      { type: QueryTypes.SELECT },
+    );
+    const proposals = await this.database.query(
+      `select v.amount,v.userAddress,p.* from 
+      (SELECT proposalId,userAddress,sum(amount) as amount from votes 
+      where 1=1
+      ${where.userAddress ? `and userAddress = '${where.userAddress}'` : ''}
+      group by proposalId,userAddress) v JOIN proposals p on v.proposalId = p.proposalId
+      ${
+        where.status && where.status.length > 0
+          ? `and p.status in ('${where.status.join("','")}')`
+          : ''
+      }
+      ORDER BY \`p\`.\`${query.sort[0]}\` ${query.sort[1]}
+       LIMIT ${query.skipIndex}, ${query.size};`,
+      {
+        type: QueryTypes.SELECT,
+      },
+    );
+
+    const proposalsDto = await this.mapper.mapArrayAsync(
+      proposals,
+      ProposalDto,
+      Proposal,
+    );
+    const rs = new BaseResultPagination<ProposalDto>();
+    const data = new PaginationDto<ProposalDto>(
+      proposalsDto,
       Number(count[0]['total']),
       query.page,
       query.size,
