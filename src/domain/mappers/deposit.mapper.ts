@@ -30,10 +30,6 @@ export class DepositMapper extends AutomapperProfile {
           (des) => des.updatedAt,
           mapFrom((src) => src.updatedAt),
         );
-      // .forMember(
-      //   (des) => des.proposal,
-      //   mapFrom((src) => (src?.getProposal ? src.getProposal() : undefined)),
-      // );
     };
   }
 }

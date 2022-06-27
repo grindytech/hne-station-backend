@@ -28,6 +28,7 @@ export enum ProposalStatus {
   Passed = 6,
   Failed = 7,
   Veto = 8,
+  AdminRejectAndBurn = 9,
 }
 
 export enum VoteType {
