@@ -6,7 +6,7 @@ metadata:
   name: station
   namespace: he-station
 spec:
-  replicas: 2
+  replicas: 1
   revisionHistoryLimit: 10
   selector:
     matchLabels:
@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: station
-          image: dttr278/dev:he-station-v0.0.1
+          image: dttr278/dev:hne-station-0.0.3
           # imagePullPolicy: "Always"
           ports:
             - containerPort: 3000
@@ -28,8 +28,8 @@ spec:
               memory: '0.25Gi'
               cpu: '250m'
             limits:
-              memory: '0.25Gi'
-              cpu: '250m'
+              memory: '0.3Gi'
+              cpu: '300m'
           env:
             - name: PORT
               value: '3000'
