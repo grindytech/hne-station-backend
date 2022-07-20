@@ -36,42 +36,42 @@ spec:
             - name: DB_HOST
               valueFrom:
                 secretKeyRef:
-                  name: he-secrets
+                  name: he-station-secrets
                   key: DB_HOST
             - name: DB_PORT
               valueFrom:
                 secretKeyRef:
-                  name: he-secrets
+                  name: he-station-secrets
                   key: DB_PORT
             - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: he-secrets
+                  name: he-station-secrets
                   key: DB_USERNAME
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: he-secrets
+                  name: he-station-secrets
                   key: DB_PASSWORD
             - name: DB_DATABASE
               valueFrom:
                 secretKeyRef:
-                  name: he-secrets
+                  name: he-station-secrets
                   key: DB_DATABASE
-            - name: SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: he-secrets
-                  key: JWT_SECRET
-            - name: X_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: he-secrets
-                  key: X_API_KEY
-            - name: SIGN_OPTIONS
-              value: '24h'
-            - name: WEB3_HTTP_URL
-              value: http://rpc2.hne.to
+            # - name: SECRET_KEY
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: he-station-secrets
+            #       key: JWT_SECRET
+            # - name: X_API_KEY
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: he-station-secrets
+            #       key: X_API_KEY
+            # - name: SIGN_OPTIONS
+            #   value: '24h'
+            # - name: WEB3_HTTP_URL
+            #   value: http://rpc2.hne.to
       imagePullSecrets:
         - name: dockerio-secret
       restartPolicy: Always
@@ -101,14 +101,14 @@ spec:
     kind: Deployment
     name: station
     apiVersion: apps/v1
-  minReplicas: 2
+  minReplicas: 1
   maxReplicas: 10
   metrics:
     - type: Resource
       resource:
         name: memory
-        targetAverageUtilization: 60
+        targetAverageUtilization: 80
     - type: Resource
       resource:
         name: cpu
-        targetAverageUtilization: 60
+        targetAverageUtilization: 80
