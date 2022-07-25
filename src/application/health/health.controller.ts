@@ -40,8 +40,8 @@ export class HealthController {
   })
   // @UseGuards(RolesGuard)
   // @Roles(Role.Admin)
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('JWT')
+  // @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth('JWT')
   getHealthLiveness(): any {
     return this.healthService.getHealth();
   }
