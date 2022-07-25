@@ -119,7 +119,7 @@ export class ProposalService {
       limit: query.size,
       offset: query.skipIndex,
       group: ['proposalId', 'userAddress'],
-      order: [['amount', 'desc']],
+      order: [[sequelize.literal('amount'), 'desc']],
     });
 
     const rs = new BaseResultPagination<DepositDto>();
