@@ -19,6 +19,7 @@ describe('ProposalService', () => {
   let service: ProposalService;
 
   beforeEach(async () => {
+    jest.setTimeout(30000);
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         DatabaseModule,
