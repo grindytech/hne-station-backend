@@ -1,9 +1,9 @@
-import { Logger } from '@nestjs/common';
+// import { Logger } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 import configuration from '../../config/configuration';
 import { models, modelsReferences } from '../../domain/models';
 
-const databaseLogger = new Logger('DataBaseModule');
+// const databaseLogger = new Logger('DataBaseModule');
 
 export const databaseProviders = [
   {
@@ -14,6 +14,7 @@ export const databaseProviders = [
         dialect: 'mysql',
         ...db,
         // logging: (sql) => databaseLogger.debug(sql),
+        logging: false,
       });
       sequelize.addModels(models);
       modelsReferences();
