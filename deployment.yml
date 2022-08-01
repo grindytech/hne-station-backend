@@ -19,14 +19,14 @@ spec:
     spec:
       containers:
         - name: station
-          image: dttr278/dev:hne-station-0.0.5
+          image: dttr278/dev:hne-station-0.0.6
           # imagePullPolicy: "Always"
-          # livenessProbe:
-          #   httpGet:
-          #     path: /health/liveness
-          #     port: 3000
-          #   initialDelaySeconds: 3
-          #   periodSeconds: 3
+          startupProbe:
+            httpGet:
+              path: /health/liveness
+              port: 3000
+            failureThreshold: 60
+            periodSeconds: 10
           ports:
             - containerPort: 3000
           resources:
