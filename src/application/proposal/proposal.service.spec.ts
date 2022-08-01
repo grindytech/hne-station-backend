@@ -17,9 +17,9 @@ import { GetDepositsDto } from './dtos';
 
 describe('ProposalService', () => {
   let service: ProposalService;
+  jest.setTimeout(30000);
 
   beforeEach(async () => {
-    jest.setTimeout(30000);
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         DatabaseModule,
