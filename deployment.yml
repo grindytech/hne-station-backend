@@ -19,8 +19,14 @@ spec:
     spec:
       containers:
         - name: station
-          image: dttr278/dev:hne-station-0.0.3
+          image: dttr278/dev:hne-station-0.0.5
           # imagePullPolicy: "Always"
+          # livenessProbe:
+          #   httpGet:
+          #     path: /health/liveness
+          #     port: 3000
+          #   initialDelaySeconds: 3
+          #   periodSeconds: 3
           ports:
             - containerPort: 3000
           resources:
@@ -58,23 +64,10 @@ spec:
                 secretKeyRef:
                   name: he-station-secrets
                   key: DB_DATABASE
-            # - name: SECRET_KEY
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: he-station-secrets
-            #       key: JWT_SECRET
-            # - name: X_API_KEY
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: he-station-secrets
-            #       key: X_API_KEY
-            # - name: SIGN_OPTIONS
-            #   value: '24h'
-            # - name: WEB3_HTTP_URL
-            #   value: http://rpc2.hne.to
       imagePullSecrets:
         - name: dockerio-secret
       restartPolicy: Always
+
 
 ---
 apiVersion: v1
