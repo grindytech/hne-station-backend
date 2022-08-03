@@ -1,7 +1,8 @@
 name: hne-station-service release
 on:
-  release:
-    types: [released]
+  push:
+    tags:
+      - 'prod_*'
 
 jobs:
   release:
