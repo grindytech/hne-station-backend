@@ -1,7 +1,7 @@
 name: hne-station build
 on:
   push:
-    branches: [main]
+    branches: [dev]
 
 jobs:
   test:

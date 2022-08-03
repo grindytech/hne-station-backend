@@ -1,7 +1,7 @@
 name: hne-station-service release
 on:
-  push:
-    tags: ['*']
+  release:
+    types: [released]
 
 jobs:
   release:
