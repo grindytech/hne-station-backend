@@ -64,6 +64,14 @@ spec:
                 secretKeyRef:
                   name: he-station-secrets
                   key: DB_DATABASE
+
+            - name: WEB3_HTTP_URL
+              value: http://rpc2.hne.to
+            - name: HE_CONTRACT
+              value: "0x20D39a5130F799b95B55a930E5b7eBC589eA9Ed8"
+
+
+            
       imagePullSecrets:
         - name: dockerio-secret
       restartPolicy: Always
