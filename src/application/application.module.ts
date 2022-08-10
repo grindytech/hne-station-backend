@@ -7,6 +7,7 @@ import { ProfileModule } from './profile/profile.module';
 import { ProposalModule } from './proposal/proposal.module';
 import { SharedModule } from './shared/shared.module';
 import { DatabaseModule } from './database/database.module';
+import { Web3Module } from './web3/web3.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { DatabaseModule } from './database/database.module';
     ProposalModule,
     MkDataModule,
     DatabaseModule,
+    Web3Module,
   ],
   providers: [],
 })

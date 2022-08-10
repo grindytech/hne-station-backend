@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import AppConfiguration from '../../config/configuration';
-import Web3 from 'web3';
-import { bufferToHex } from 'ethereumjs-utils';
 import * as ethSigUtil from 'eth-sig-util';
+import { bufferToHex } from 'ethereumjs-utils';
+import Web3 from 'web3';
+import AppConfiguration from '../../config/configuration';
+import { contract_he } from './contract';
 
 @Injectable()
 export class Web3Service {
@@ -68,5 +69,19 @@ export class Web3Service {
       signature = signature.slice(0, signature.length - 2) + replaceV;
     }
     return signature;
+  }
+
+  async getHEBalance(address: string): Promise<number> {
+    const balance = await contract_he(this.getWeb3())
+      .methods.balanceOf(address)
+      .call();
+    return Number(Web3.utils.fromWei(String(balance)));
+  }
+
+  async getHEBurned(): Promise<number> {
+    const balance = await contract_he(this.getWeb3())
+      .methods.balanceOf('0x000000000000000000000000000000000000dead')
+      .call();
+    return Number(Web3.utils.fromWei(String(balance)));
   }
 }

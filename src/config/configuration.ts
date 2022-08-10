@@ -23,4 +23,7 @@ export default () => ({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
   },
+  contracts: {
+    heContract: process.env.HE_CONTRACT,
+  },
 });
